@@ -483,13 +483,13 @@
     const phone = (x, kind) => {
       let p = R(x, 40, 170, 290, { r: 20, c: kind === 0 ? 'g' : '' });
       const body = kind === 0 ? 'g' : 'a';
-      p += R(x + 10, 52, 150, 26, { r: 4, c: kind === 0 ? 'g' : 'a' });
+      p += R(x + 10, 52, 150, 26, { r: 4, c: kind === 0 ? 'g' : 'hot' });
       p += T(x + 85, 65, kind === 0 ? 'HEADER' : '쇼핑몰', { s: 12, b: true, c: kind === 0 ? '' : 'w' });
       p += R(x + 10, 88, 150, 90, { r: 4, c: kind === 0 ? 'g' : 'c' });
       if (kind === 0) p += L(x + 10, 88, x + 160, 178, { c: 'thin' }) + L(x + 160, 88, x + 10, 178, { c: 'thin' });
       else p += C(x + 120, 112, 12, { c: 'y' }) + `<path d="M${x + 10} 178 L${x + 60} 130 L${x + 100} 165 L${x + 125} 145 L${x + 160} 178 Z" class="fill b" opacity=".6"/>`;
       [0, 1].forEach(j => p += `<rect x="${x + 10}" y="${190 + j * 18}" width="${j ? 90 : 140}" height="8" rx="4" class="${kind === 0 ? 'fillg' : 'fill'}" ${kind ? 'opacity=".35"' : ''}/>`);
-      p += R(x + 20, 240, 130, 32, { r: 8, c: kind === 0 ? 'g' : 'a' }) + T(x + 85, 256, kind === 0 ? 'BUTTON' : '장바구니 담기', { s: 12, b: true, c: kind === 0 ? '' : 'w' });
+      p += R(x + 20, 240, 130, 32, { r: 4, c: kind === 0 ? 'g' : 'hot' }) + T(x + 85, 256, kind === 0 ? 'BUTTON' : '장바구니 담기', { s: 12, b: true, c: kind === 0 ? '' : 'w' });
       return p;
     };
     s += phone(40, 0) + phone(355, 1) + phone(670, 2);
