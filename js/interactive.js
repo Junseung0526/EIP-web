@@ -207,10 +207,10 @@
       for (let i = 0; i < CAP; i++) { s += `<rect x="64" y="${250 - (i + 1) * 36}" width="112" height="34" rx="4" class="bx g" opacity=".5"/>`; }
       st.forEach((v, i) => s += `<rect x="64" y="${250 - (i + 1) * 36}" width="112" height="34" rx="4" class="bx ${i === st.length - 1 ? 'hot' : 'a'} anim"/>` + T(120, 250 - (i + 1) * 36 + 17, v, { b: true, s: 15, c: i === st.length - 1 ? 'w' : '' }));
       const ty = st.length ? 250 - st.length * 36 + 17 : 250 + 12;
-      s += A(260, ty, 190, ty, { c: 'ac' }) + T(266, ty, `TOP = ${st.length ? st.length - 1 : -1}`, { a: 'start', b: true, c: 'a', s: 14 });
+      s += A(256, ty, 190, ty, { c: 'ac' }) + T(262, ty, `TOP = ${st.length ? st.length - 1 : -1}`, { a: 'start', b: true, c: 'a', s: 14 });
       s += T(120, 272, 'Bottom', { s: 12, c: 'm' });
-      s += T(330, 60, '삽입(PUSH): TOP + 1 후 저장\n삭제(POP): TOP 위치 값 꺼내고 TOP − 1\nLIFO: Last In, First Out\nTOP == 용량−1 → Overflow\nTOP == −1 → Underflow', { a: 'start', s: 12.5, lh: 22, c: 'm' });
-      el.querySelector('#ssvg').innerHTML = svg(520, 285, s, { maxw: 540, label: '스택 시뮬레이터' });
+      s += T(300, 60, '삽입(PUSH): TOP + 1 후 저장\n삭제(POP): TOP 위치 값 꺼내고 TOP − 1\nLIFO: Last In, First Out\nTOP == 용량−1 → Overflow\nTOP == −1 → Underflow', { a: 'start', s: 12.5, lh: 22, c: 'm' });
+      el.querySelector('#ssvg').innerHTML = svg(600, 285, s, { maxw: 640, label: '스택 시뮬레이터' });
       el.querySelector('#smsg').textContent = msg;
       el.querySelector('#slog').innerHTML = log.slice(-5).join(' · ') || '&nbsp;';
     };
