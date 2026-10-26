@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>정처기 중간고사 마스터</title>
+<meta name="description" content="정보처리기사 1·2과목 중간고사 대비: SVG 도해, 인터랙티브 시뮬레이터, 디자인 패턴 23종, 예상문제와 암기카드">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233b6cf6'/%3E%3Cpath d='M18 34l10 10 18-22' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<script>
+  try { var t = localStorage.getItem('eip-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <marker id="m-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1 L10,5 L0,9 z" class="mk-fill"/></marker>
+    <marker id="m-arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1 L10,5 L0,9 z" class="mk-acc"/></marker>
+    <marker id="m-arr-e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,1 L10,5 L0,9 z" class="mk-red"/></marker>
+    <marker id="m-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L9,5 L1,9" class="mk-open"/></marker>
+    <marker id="m-tri" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.8,1 L11,6 L0.8,11 z" class="mk-hollow"/></marker>
+    <marker id="m-dia" viewBox="0 0 16 10" refX="15" refY="5" markerWidth="18" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.8,5 L8,0.8 L15.2,5 L8,9.2 z" class="mk-hollow"/></marker>
+    <marker id="m-diaf" viewBox="0 0 16 10" refX="15" refY="5" markerWidth="18" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0.8,5 L8,0.8 L15.2,5 L8,9.2 z" class="mk-fill"/></marker>
+  </defs>
+</svg>
+
+<header class="top">
+  <button id="menuBtn" class="icon-btn" aria-label="목차 열기">☰</button>
+  <a class="brand" href="#/">정처기 <b>중간고사 마스터</b></a>
+  <form id="searchForm" class="search" role="search"><input id="search" type="search" placeholder="검색 (싱글톤, 결합도, IPSec …)" autocomplete="off"></form>
+  <nav class="topnav">
+    <a href="#/scope">범위</a>
+    <a href="#/quiz">문제풀이</a>
+    <a href="#/cards">암기카드</a>
+    <a href="#/cheat">총정리</a>
+  </nav>
+  <button id="themeBtn" class="icon-btn" aria-label="테마 전환">◐</button>
+</header>
+
+<div class="shell">
+  <aside id="side" aria-label="목차"></aside>
+  <div id="scrim"></div>
+  <main id="main" tabindex="-1"></main>
+</div>
+
+<script src="js/svg.js"></script>
+<script src="js/diagrams1.js"></script>
+<script src="js/diagrams2.js"></script>
+<script src="js/patterns.js"></script>
+<script src="js/interactive.js"></script>
+<script src="js/data/subject1.js"></script>
+<script src="js/data/subject1b.js"></script>
+<script src="js/data/subject2.js"></script>
+<script src="js/data/subject2b.js"></script>
+<script src="js/data/scope.js"></script>
+<script src="js/data/quiz.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
