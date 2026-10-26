@@ -291,7 +291,7 @@
     const g = (window.GLOSSARY || {})[id];
     if (g) $$('td,th,b', main).forEach(el => { const en = g[el.textContent.trim()]; if (en) { el.dataset.en = en; el.classList.add('gl', 'first'); } });
     if (!termRe) return;
-    const seen = new Set(), walker = document.createTreeWalker($('.article', main) || main, NodeFilter.SHOW_TEXT, {
+    const seen = new Set(), used = {}, walker = document.createTreeWalker($('.article', main) || main, NodeFilter.SHOW_TEXT, {
       acceptNode: n => n.parentElement.closest('svg,pre,code,button,script,style,.th,.crumbs,.gl,[data-en],[data-diagram],.rail,.pager,.donebar') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
     }), nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -300,9 +300,12 @@
       if (!termRe.test(txt)) return;
       const frag = document.createDocumentFragment(); let last = 0; termRe.lastIndex = 0;
       for (let m; (m = termRe.exec(txt));) {
+        const after = txt.slice(m.index + m[1].length);
+        if (/^\s*\(/.test(after) || (m[1] === '트리' && after[0] === '거')) continue;   // 이미 뒤에 괄호로 영어가 붙었거나 '트리거'인 경우는 건너뜀
+        if ((used[m[1]] = (used[m[1]] || 0) + 1) > 3) continue;   // 같은 용어는 한 페이지에서 앞의 3번까지만 표시(밑줄 과다 방지)
         frag.append(txt.slice(last, m.index));
-        const sp = document.createElement('span'), en = window.TERMS[m[1]];
-        sp.className = 'gl' + (seen.has(en) ? '' : ' first'); seen.add(en); sp.dataset.en = en; sp.textContent = m[1];
+        const sp = document.createElement('span'), en = window.TERMS[m[1]].replace(/ \((.+)\)$/, ' · $1'), sk = en + (n.parentElement.closest('td,th,h2,h3') ? '#' : '');   // 표·소제목의 용어는 본문과 따로 한 번씩 표시
+        sp.className = 'gl' + (seen.has(sk) ? '' : ' first'); seen.add(sk); sp.dataset.en = en; sp.textContent = m[1];
         frag.append(sp); last = m.index + m[1].length;
       }
       frag.append(txt.slice(last)); n.replaceWith(frag);
