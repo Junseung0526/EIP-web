@@ -301,7 +301,7 @@
   $('#menuBtn').onclick = () => document.body.classList.toggle('menu');
   $('#scrim').onclick = () => document.body.classList.remove('menu');
   $('#themeBtn').onclick = () => {
-    const root = document.documentElement, dark = (root.dataset.theme || 'dark') === 'dark';
+    const root = document.documentElement, dark = (root.dataset.theme || 'light') === 'dark';
     root.dataset.theme = dark ? 'light' : 'dark';
     try { localStorage.setItem('eip-theme', root.dataset.theme); } catch (e) { /* 무시 */ }
   };
