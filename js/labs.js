@@ -40,76 +40,94 @@
     draw();
   };
 
-  /* ───────── 블랙박스: 동치 분할 · 경계값 탐침 ───────── */
+  /* ───────── 블랙박스: 동치 분할 · 경계값 탐침 (마커 직접 드래그) ───────── */
   D.partLab = el => {
-    let mn = 1, mx = 100, x = 50;
+    let mn = 1, mx = 100, x = 50, lo = -39, hi = 140, mk = null, lab = null, mkEase = null;
+    const X0 = 40, W = 800, f = v => X0 + (v - lo) / (hi - lo) * W, alive = () => el.isConnected;
     el.innerHTML = `<div class="ctl"><label>유효 범위 최소 <input type="number" id="pmn" value="1" style="width:76px"></label><label>최대 <input type="number" id="pmx" value="100" style="width:76px"></label></div>
       <div class="ctl"><label>입력값 x = <b id="pxv">50</b></label><input type="range" id="px" style="width:min(520px,70%)"></div>
-      <div id="psv"></div><div class="note" id="pnote"></div>`;
-    const draw = () => {
-      mn = +$(el, '#pmn').value; mx = Math.max(mn + 5, +$(el, '#pmx').value);
-      const lo = mn - 40, hi = mx + 40, sl = $(el, '#px'); sl.min = lo; sl.max = hi;
-      x = Math.min(hi, Math.max(lo, +sl.value || x)); sl.value = x; $(el, '#pxv').textContent = x;
-      const X0 = 40, W = 800, f = v => X0 + (v - lo) / (hi - lo) * W;
-      let s = `<rect x="${X0}" y="50" width="${f(mn) - X0}" height="34" class="bx e"/><rect x="${f(mn)}" y="50" width="${f(mx) - f(mn)}" height="34" class="bx b"/><rect x="${f(mx)}" y="50" width="${X0 + W - f(mx)}" height="34" class="bx e"/>`;
-      s += T(f(mn) / 2 + X0 / 2 + 20, 67, '무효 (x < ' + mn + ')', { s: 12, b: true }) + T((f(mn) + f(mx)) / 2, 67, `유효 (${mn} ≤ x ≤ ${mx})`, { s: 12, b: true }) + T((f(mx) + X0 + W) / 2, 67, '무효 (x > ' + mx + ')', { s: 12, b: true });
-      [mn - 1, mn, mn + 1, mx - 1, mx, mx + 1].forEach(v => { s += C(f(v), 110, 6, { c: 'd' }) + T(f(v), 130, v, { s: 11.5, b: true }); });
-      s += T(X0, 24, '경계값: min−1, min, min+1, max−1, max, max+1', { a: 'start', s: 12, c: 'm' });
-      s += `<path d="M${f(x)},96 l-8,-14 l16,0 z" class="fill" style="fill:var(--accent)"/>` + T(f(x), 150, 'x=' + x, { b: true, c: 'a', s: 13 });
-      $(el, '#psv').innerHTML = svg(880, 170, s, { label: '동치 분할과 경계값 위치' });
+      <div id="psv" style="touch-action:none;cursor:ew-resize"></div><div class="note" id="pnote"></div><div class="note" style="margin-top:-4px">슬라이더 또는 그림 위를 직접 드래그해 x를 옮길 수 있습니다.</div>`;
+    const note = () => {
       const valid = x >= mn && x <= mx, bnd = [mn - 1, mn, mn + 1, mx - 1, mx, mx + 1].includes(x);
+      $(el, '#pxv').textContent = x; lab.textContent = 'x=' + x;
       $(el, '#pnote').innerHTML = `x = <b>${x}</b> → ${valid ? '<b style="color:var(--b)">유효 동치 클래스</b>' : '<b style="color:var(--e)">무효 동치 클래스</b>' + (x < mn ? '(하한 미만)' : '(상한 초과)')} · ${bnd ? '<b style="color:var(--d)">경계값 분석 대상 값</b>' : '경계값 아님 (동치 분할의 대표값으로는 충분)'}`;
     };
-    el.querySelectorAll('input').forEach(i => i.oninput = draw);
-    draw();
+    const build = () => {
+      mn = +$(el, '#pmn').value; mx = Math.max(mn + 5, +$(el, '#pmx').value); lo = mn - 40; hi = mx + 40;
+      const sl = $(el, '#px'); sl.min = lo; sl.max = hi; x = Math.min(hi, Math.max(lo, x)); sl.value = x;
+      let s = `<rect x="${X0}" y="50" width="${f(mn) - X0}" height="34" class="bx e"/><rect x="${f(mn)}" y="50" width="${f(mx) - f(mn)}" height="34" class="bx b"/><rect x="${f(mx)}" y="50" width="${X0 + W - f(mx)}" height="34" class="bx e"/>`;
+      s += T(f(mn) / 2 + X0 / 2 + 20, 67, '무효 (x < ' + mn + ')', { s: 12, b: true }) + T((f(mn) + f(mx)) / 2, 67, `유효 (${mn} ≤ x ≤ ${mx})`, { s: 12, b: true }) + T((f(mx) + X0 + W) / 2, 67, '무효 (x > ' + mx + ')', { s: 12, b: true });
+      [mn - 1, mn, mn + 1, mx - 1, mx, mx + 1].forEach(v => { s += C(f(v), 110, 5, { c: 'd' }); });
+      s += T(f(mn), 132, `${mn - 1} · ${mn} · ${mn + 1}`, { s: 11.5, b: true, c: 'd' }) + T(f(mx), 132, `${mx - 1} · ${mx} · ${mx + 1}`, { s: 11.5, b: true, c: 'd' });
+      s += T(X0, 24, '경계값: min−1, min, min+1, max−1, max, max+1', { a: 'start', s: 12, c: 'm' });
+      s += `<g id="mk"><path d="M0,96 l-9,-15 l18,0 z" class="fill" style="fill:var(--accent)"/><line x1="0" y1="96" x2="0" y2="50" class="ln ac thin dash"/>${T(0, 150, 'x=' + x, { b: true, c: 'a', s: 13 })}</g>`;
+      $(el, '#psv').innerHTML = svg(880, 170, s, { label: '동치 분할과 경계값 위치' });
+      mk = $(el, '#mk'); lab = mk.querySelector('text');
+      mkEase = S.ease(f(x), px => mk.setAttribute('transform', `translate(${px},0)`), alive, 0.28);
+      mkEase.set(f(x)); note();
+    };
+    const setX = v => { x = Math.round(Math.min(hi, Math.max(lo, v))); $(el, '#px').value = x; mkEase.to(f(x)); note(); };
+    $(el, '#px').oninput = e => setX(+e.target.value);
+    $(el, '#pmn').oninput = build; $(el, '#pmx').oninput = build;
+    const fromPointer = e => { const svgEl = $(el, '#psv svg'), r = svgEl.getBoundingClientRect(), ux = (e.clientX - r.left) / r.width * 880; setX(lo + (ux - X0) / W * (hi - lo)); };
+    const box = $(el, '#psv');
+    box.addEventListener('pointerdown', e => { box.setPointerCapture(e.pointerId); fromPointer(e); box._drag = true; });
+    box.addEventListener('pointermove', e => { if (box._drag) fromPointer(e); });
+    box.addEventListener('pointerup', () => { box._drag = false; });
+    build();
   };
 
-  /* ───────── 시간복잡도: n 슬라이더 ───────── */
+  /* ───────── 시간복잡도: n 슬라이더 (막대가 부드럽게 늘어남) ───────── */
   D.bigOLab = el => {
-    el.innerHTML = `<div class="ctl"><label>입력 크기 n = <b id="bn">100</b></label><input type="range" id="bs" min="0" max="3" step="0.05" value="2" style="width:min(520px,70%)"></div><div id="bsv"></div><div class="note">연산 1회 = 1ns(초당 10억 회)로 가정한 소요 시간입니다. 막대는 로그 스케일입니다.</div>`;
-    const fmtT = s => s < 1e-6 ? '순간' : s < 1e-3 ? (s * 1e6).toFixed(0) + ' µs' : s < 1 ? (s * 1e3).toFixed(1) + ' ms' : s < 60 ? s.toFixed(1) + ' 초' : s < 3600 ? (s / 60).toFixed(1) + ' 분' : s < 86400 ? (s / 3600).toFixed(1) + ' 시간' : s < 3.15e7 ? (s / 86400).toFixed(1) + ' 일' : s < 3.15e16 ? (s / 3.15e7).toExponential(1) + ' 년' : '우주 나이 초과';
-    const fmtN = v => v === Infinity || v > 1e21 ? '10^' + Math.round(Math.log10(v)) : v >= 1e7 ? v.toExponential(2) : Math.round(v).toLocaleString();
-    const draw = () => {
+    el.innerHTML = `<div class="ctl"><label>입력 크기 n = <b id="bn">100</b></label><input type="range" id="bs" min="0" max="3" step="0.01" value="2" style="width:min(520px,70%)"></div><div id="bsv"></div><div class="note">연산 1회 = 1ns(초당 10억 회)로 가정한 소요 시간입니다. 막대는 로그 스케일입니다.</div>`;
+    const alive = () => el.isConnected;
+    const NAMES = [['O(1)', 'b'], ['O(log n)', 'f'], ['O(n)', 'a'], ['O(n log n)', 'c'], ['O(n²)', 'e'], ['O(2ⁿ)', 'd']];
+    let s = '';
+    NAMES.forEach(([nm, c], i) => { const y = 14 + i * 46; s += T(10, y + 16, nm, { a: 'start', b: true, s: 14, c }) + `<rect x="130" y="${y + 2}" width="520" height="28" rx="4" class="bx g"/><rect data-bar="${i}" x="130" y="${y + 2}" width="3" height="28" rx="4" class="bx ${c}"/>` + T(662, y + 10, '', { a: 'start', s: 12.5, b: true }) + T(662, y + 25, '', { a: 'start', s: 11.5, c: 'm' }); });
+    $(el, '#bsv').innerHTML = svg(880, 296, s, { label: '입력 크기별 연산 횟수' });
+    const bars = [...el.querySelectorAll('[data-bar]')], txt = [...el.querySelectorAll('#bsv text')].filter((_, i) => i % 3 !== 0);
+    const eases = bars.map(b => S.ease(3, w => b.setAttribute('width', Math.max(3, w)), alive, 0.2));
+    const fmtT = sec => sec < 1e-6 ? '순간' : sec < 1e-3 ? (sec * 1e6).toFixed(0) + ' µs' : sec < 1 ? (sec * 1e3).toFixed(1) + ' ms' : sec < 60 ? sec.toFixed(1) + ' 초' : sec < 3600 ? (sec / 60).toFixed(1) + ' 분' : sec < 86400 ? (sec / 3600).toFixed(1) + ' 시간' : sec < 3.15e7 ? (sec / 86400).toFixed(1) + ' 일' : sec < 3.15e16 ? (sec / 3.15e7).toExponential(1) + ' 년' : '우주 나이 초과';
+    const fmtN = v => v === Infinity || v > 1e21 ? '10^' + (v === Infinity ? '300+' : Math.round(Math.log10(v))) : v >= 1e7 ? v.toExponential(2) : Math.round(v).toLocaleString();
+    const update = first => {
       const n = Math.max(1, Math.round(Math.pow(10, +$(el, '#bs').value))); $(el, '#bn').textContent = n.toLocaleString();
       const lg = Math.log2(Math.max(n, 2));
-      const rows = [['O(1)', 1, 'b'], ['O(log n)', lg, 'f'], ['O(n)', n, 'a'], ['O(n log n)', n * lg, 'c'], ['O(n²)', n * n, 'e'], ['O(2ⁿ)', n > 1000 ? Infinity : Math.pow(2, n), 'd']];
-      let s = '';
-      rows.forEach(([nm, v, c], i) => {
-        const y = 14 + i * 46, ln = v === Infinity ? 99 : Math.log10(Math.max(v, 1)), w = Math.min(1, ln / 18) * 520;
-        s += T(10, y + 16, nm, { a: 'start', b: true, s: 14, c }) + `<rect x="130" y="${y + 2}" width="520" height="28" rx="4" class="bx g"/><rect x="130" y="${y + 2}" width="${Math.max(3, w)}" height="28" rx="4" class="bx ${c} anim"/>`;
-        s += T(662, y + 10, fmtN(v), { a: 'start', s: 12.5, b: true }) + T(662, y + 25, fmtT(v === Infinity ? 1e300 : v * 1e-9), { a: 'start', s: 11.5, c: 'm' });
+      [1, lg, n, n * lg, n * n, n > 1000 ? Infinity : Math.pow(2, n)].forEach((v, i) => {
+        const ln = v === Infinity ? 99 : Math.log10(Math.max(v, 1)), w = Math.min(1, ln / 18) * 520;
+        txt[i * 2].textContent = fmtN(v); txt[i * 2 + 1].textContent = fmtT(v === Infinity ? 1e300 : v * 1e-9);
+        first ? eases[i].set(w) : eases[i].to(w);
       });
-      $(el, '#bsv').innerHTML = svg(880, 296, s, { label: '입력 크기별 연산 횟수' });
     };
-    $(el, '#bs').oninput = draw; draw();
+    $(el, '#bs').oninput = () => update(false); update(true);
   };
 
-  /* ───────── EAI: 연결 수 비교 ───────── */
+  /* ───────── EAI: 연결 수 비교 (정점 수가 연속적으로 변함) ───────── */
   D.eaiLab = el => {
     el.innerHTML = `<div class="ctl"><label>연동할 애플리케이션 수 N = <b id="en">5</b></label><input type="range" id="es" min="2" max="10" value="5" style="width:min(420px,60%)"></div><div id="esv"></div><div class="note" id="enote"></div>`;
-    const draw = () => {
-      const n = +$(el, '#es').value; $(el, '#en').textContent = n;
-      const pts = (cx, cy, r) => [...Array(n)].map((_, i) => { const th = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + r * Math.cos(th), cy + r * Math.sin(th)]; });
+    const alive = () => el.isConnected;
+    const draw = nf => {
+      const m = Math.ceil(nf - 1e-6), op = i => Math.max(0, Math.min(1, nf - i));
+      const ring = (cx, cy, r) => [...Array(m)].map((_, i) => { const th = -Math.PI / 2 + i * 2 * Math.PI / nf; return [cx + r * Math.cos(th), cy + r * Math.sin(th)]; });
       let s = '';
-      // P2P
-      let p = pts(150, 130, 90);
-      for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) s += L(p[i][0], p[i][1], p[j][0], p[j][1], { c: 'thin e' });
-      p.forEach(q => s += C(q[0], q[1], 9, { c: 'a' }));
-      s += T(150, 250, 'Point-to-Point', { b: true, s: 13.5 }) + T(150, 272, `연결 ${n * (n - 1) / 2}개  N(N−1)/2`, { s: 12.5, c: 'e', b: true });
-      // Hub
-      p = pts(440, 130, 90);
-      p.forEach(q => s += L(440, 130, q[0], q[1], { c: 'thin' }) + C(q[0], q[1], 9, { c: 'a' }));
+      let p = ring(150, 130, 90);
+      for (let i = 0; i < m; i++) for (let j = i + 1; j < m; j++) s += `<g opacity="${Math.min(op(i), op(j))}">${L(p[i][0], p[i][1], p[j][0], p[j][1], { c: 'thin e' })}</g>`;
+      p.forEach((q, i) => s += `<g opacity="${op(i)}">${C(q[0], q[1], 9, { c: 'a' })}</g>`);
+      s += T(150, 250, 'Point-to-Point', { b: true, s: 13.5 }) + T(150, 272, `연결 ${n1(nf * (nf - 1) / 2)}개  N(N−1)/2`, { s: 12.5, c: 'e', b: true });
+      p = ring(440, 130, 90);
+      p.forEach((q, i) => s += `<g opacity="${op(i)}">${L(440, 130, q[0], q[1], { c: 'thin' })}${C(q[0], q[1], 9, { c: 'a' })}</g>`);
       s += C(440, 130, 20, { c: 'hot' }) + T(440, 130, '허브', { c: 'w', s: 11, b: true });
-      s += T(440, 250, 'Hub & Spoke', { b: true, s: 13.5 }) + T(440, 272, `연결 ${n}개  N`, { s: 12.5, c: 'b', b: true });
-      // Bus
+      s += T(440, 250, 'Hub & Spoke', { b: true, s: 13.5 }) + T(440, 272, `연결 ${n1(nf)}개  N`, { s: 12.5, c: 'b', b: true });
       const bx = 620, bw = 240;
       s += R(bx, 120, bw, 20, { c: 'd', r: 6 }) + T(bx + bw / 2, 130, '메시지 버스', { s: 11, c: 'd', b: true });
-      for (let i = 0; i < n; i++) { const x = bx + 14 + i * (bw - 28) / Math.max(n - 1, 1), top = i % 2 === 0; s += L(x, top ? 120 : 140, x, top ? 84 : 176) + C(x, top ? 76 : 184, 9, { c: 'a' }); }
-      s += T(740, 250, 'Message Bus', { b: true, s: 13.5 }) + T(740, 272, `연결 ${n}개  N`, { s: 12.5, c: 'b', b: true });
+      for (let i = 0; i < m; i++) { const x = bx + 14 + i * (bw - 28) / Math.max(nf - 1, 1), top = i % 2 === 0; s += `<g opacity="${op(i)}">${L(x, top ? 120 : 140, x, top ? 84 : 176)}${C(x, top ? 76 : 184, 9, { c: 'a' })}</g>`; }
+      s += T(740, 250, 'Message Bus', { b: true, s: 13.5 }) + T(740, 272, `연결 ${n1(nf)}개  N`, { s: 12.5, c: 'b', b: true });
       $(el, '#esv').innerHTML = svg(880, 290, s, { label: 'EAI 유형별 연결 수 비교' });
-      $(el, '#enote').innerHTML = `N=${n}일 때 점대점은 <b>${n * (n - 1) / 2}</b>개, 허브·버스는 <b>${n}</b>개의 연결이 필요합니다. 연동 대상이 늘수록 점대점은 급격히 복잡해집니다.`;
     };
-    $(el, '#es').oninput = draw; draw();
+    const n1 = v => Math.round(v);
+    const anim = S.ease(5, draw, alive, 0.16);
+    const note = n => { $(el, '#en').textContent = n; $(el, '#enote').innerHTML = `N=${n}일 때 점대점은 <b>${n * (n - 1) / 2}</b>개, 허브·버스는 <b>${n}</b>개의 연결이 필요합니다. 연동 대상이 늘수록 점대점은 급격히 복잡해집니다.`; };
+    $(el, '#es').oninput = e => { const n = +e.target.value; note(n); anim.to(n); };
+    note(5); anim.set(5);
   };
 
   /* ───────── 버전 관리 시뮬레이터 ───────── */

@@ -324,3 +324,37 @@ summary{cursor:pointer}
   .top,#side,.donebar,.pager,.rail,.fig .ctl{display:none!important}
   .page{display:block;padding:0}
 }
+
+/* 결합도·응집도 실습 */
+.lad{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:20px;align-items:start}
+.lad-l{display:flex;flex-direction:column;gap:6px}
+.lad-ax{font-family:var(--mono);font-size:11px;color:var(--muted);padding:2px 2px}
+.lad-r{width:var(--w);min-width:150px;text-align:left;display:flex;flex-direction:column;padding:7px 12px;border:1px solid var(--line);border-left:4px solid var(--c);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;font:inherit;transition:background .2s,border-color .2s,transform .2s}
+.lad-r small{color:var(--muted);font-size:11px}
+.lad-r:hover{background:var(--g-bg)}
+.lad-r.on{background:var(--accent-bg);border-color:var(--accent);border-left-color:var(--c);transform:translateX(4px)}
+.lad-d{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;min-width:0}
+.lad-d pre{font-size:12.5px}
+@media (max-width:760px){.lad{grid-template-columns:1fr}.lad-r{width:100%}}
+
+/* ───── 모션: 드래그·전환이 끊기지 않도록 ───── */
+svg.dg .bx,svg.dg .ln,svg.dg .fill,svg.dg text.t,svg.dg path{transition:fill .32s ease,stroke .32s ease,opacity .32s ease,stroke-width .2s ease}
+svg.dg g,svg.dg .sbar{will-change:transform}
+.sbar{transition:transform .42s cubic-bezier(.25,.8,.25,1)}
+.glide{transition:transform .38s cubic-bezier(.25,.8,.25,1)}
+@keyframes drop{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:none}}
+@keyframes leave{to{opacity:0;transform:translateY(-34px)}}
+.drop{animation:drop .34s cubic-bezier(.2,.9,.25,1)}
+.leave{animation:leave .34s ease-in forwards;pointer-events:none}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page{animation:pageIn .3s ease-out}
+.btn,.seg button,.q-opt,.nav-i,.toc a,.pager a,.ch li a,.quick a,.lad-r,.topnav a,.icon-btn,.callout,.card,.sr{transition:background-color .18s ease,border-color .18s ease,color .18s ease,transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.btn:active,.seg button:active{transform:scale(.97)}
+.q-opt:hover:not(:disabled){transform:translateX(3px)}
+.grid a.card:hover,.sr:hover{transform:translateY(-2px)}
+input[type=range]{cursor:grab}
+input[type=range]:active{cursor:grabbing}
+#side,.rail,.fig .scroll{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}

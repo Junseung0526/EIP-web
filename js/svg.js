@@ -112,6 +112,24 @@
     return svg(Math.max(W, 300), H, out, { label: spec.label || '클래스 다이어그램' });
   }
 
-  window.S = { K: 1.12, esc, T, R, L, P, C, E, PG, G, B, A, svg, actor, tw, classDiagram, n1 };
+  /** 값이 목표를 향해 부드럽게 따라가는 이징(rAF). alive() 가 false 면 중단 */
+  function ease(init, apply, alive, k) {
+    let cur = init, tgt = init, raf = 0;
+    k = k || 0.2;
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const step = () => {
+      if (alive && !alive()) { raf = 0; return; }
+      cur += (tgt - cur) * k;
+      if (Math.abs(tgt - cur) < 0.003) { cur = tgt; raf = 0; apply(cur); return; }
+      apply(cur); raf = requestAnimationFrame(step);
+    };
+    return {
+      to(t) { tgt = t; if (reduce) { cur = t; apply(cur); return; } if (!raf) raf = requestAnimationFrame(step); },
+      set(v) { cur = tgt = v; apply(v); },
+      get value() { return cur; },
+    };
+  }
+
+  window.S = { K: 1.12, ease, esc, T, R, L, P, C, E, PG, G, B, A, svg, actor, tw, classDiagram, n1 };
   window.DIAGRAMS = window.DIAGRAMS || {};
 })();
