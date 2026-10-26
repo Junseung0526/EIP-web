@@ -2,10 +2,10 @@
 window.TOPICS = window.TOPICS || [];
 window.H = {
   fig: (name, cap, arg) => `<figure class="fig"><div data-diagram="${name}" data-arg="${arg || ''}"></div><figcaption>${cap || ''}</figcaption></figure>`,
-  exam: h => `<div class="callout exam"><b>시험 포인트</b>${h}</div>`,
-  tip: h => `<div class="callout tip"><b>알아두기</b>${h}</div>`,
-  warn: h => `<div class="callout warn"><b>헷갈리는 점</b>${h}</div>`,
-  mn: h => `<div class="callout mn"><b>암기법</b>${h}</div>`,
+  exam: h => `<div class="callout exam"><b>출제 포인트</b>${h}</div>`,
+  tip: h => `<div class="callout tip"><b>참고</b>${h}</div>`,
+  warn: h => `<div class="callout warn"><b>구분 주의</b>${h}</div>`,
+  mn: h => `<div class="callout mn"><b>암기 요령</b>${h}</div>`,
   tbl: (head, rows) => `<div class="tw"><table><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${rows.map(r => `<tr>${r.map((c, i) => i === 0 ? `<td class="k">${c}</td>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`,
 };
 window.addTopic = t => window.TOPICS.push(t);
@@ -48,7 +48,7 @@ ${warn('디자인 패턴 중 <b>프로토타입 패턴</b>(객체 복제)과는 
     cards: [['프로토타입 모형을 쓰는 이유는?', '요구사항이 불명확할 때 시제품으로 사용자 요구를 명확히 하기 위해'], ['프로토타입 유형 2가지', '폐기형(Throw-away), 진화형(Evolutionary)']] });
 
   addTopic({ id: 'spiral', subj: 1, group: G1, title: '나선형 모형', en: 'Spiral Model',
-    exam: '"위험 분석(Risk Analysis)이 핵심, 점진적 개발, Boehm" → 나선형 모형. 4단계 순서 암기!',
+    exam: '"위험 분석(Risk Analysis)이 핵심, 점진적 개발, Boehm" → 나선형 모형. 4단계 순서를 암기할 것.',
     body: `
 <p>폭포수 모형 + 프로토타입 모형 + <b>위험 분석</b>을 결합한 모형. 개발을 여러 번 <b>반복(나선)</b>하면서 점진적으로 완성도를 높입니다. Boehm이 제안.</p>
 ${fig('spiral', '나선형 모형 — 계획 → 위험 분석 → 개발 → 고객 평가를 반복')}
@@ -157,7 +157,7 @@ ${tbl(['요소', '모양', '의미'], [['프로세스 (Process)', '원(버블)',
     cards: [['DFD의 4가지 구성 요소', '프로세스(원), 자료 흐름(화살표), 자료 저장소(평행선), 단말(사각형)'], ['DFD에서 단말(Terminator)이란?', '시스템 밖의 외부 입출력 주체']] });
 
   addTopic({ id: 'dd', subj: 1, group: G2, title: '자료 사전 (Data Dictionary)', en: 'Data Dictionary',
-    exam: '표기 기호 6개: = + ( ) [ | ] { } * *  의 의미를 정확히!',
+    exam: '표기 기호 6개: = + ( ) [ | ] { } * *  의 의미를 정확히 구분할 것.',
     body: `
 <p>DFD에 나타난 자료 흐름·저장소의 <b>상세 정의</b>를 기술한 사전입니다. 아래 기호로 자료 구조를 표현합니다.</p>
 ${tbl(['기호', '의미', '읽는 법'], [['=', '정의 (is composed of)', '~로 구성된다'], ['+', '연결 (and)', '그리고'], ['( )', '생략 가능 (optional)', '있어도 없어도 됨'], ['[ | ]', '선택 (or)', '여러 개 중 하나 선택'], ['{ }', '반복 (iteration)', '0회 이상 반복 ( {…}ⁿ_m : n회 이상 m회 이하 )'], ['* *', '설명 (comment)', '주석']])}
@@ -179,7 +179,7 @@ ${tbl(['도표', '설명'], [['가시적 도표 (Visual Table of Contents)', '�
     cards: [['HIPO 도표 3종', '가시적(VTOC), 총체적(Overview), 세부적(Detail)'], ['HIPO 풀이', 'Hierarchy plus Input-Process-Output']] });
 
   addTopic({ id: 'req-verify', subj: 1, group: G2, title: '요구사항 검증 방법', en: 'Requirements Validation',
-    exam: '워크스루(동료·비공식) vs 인스펙션(전문가·공식) 구분!',
+    exam: '워크스루(동료·비공식) vs 인스펙션(전문가·공식)을 구분할 것.',
     body: `
 <p>작성된 요구사항 명세가 <b>사용자의 요구를 올바르게 반영</b>하고 <b>완전·일관·명확</b>한지 확인합니다. (Validation: "올바른 제품을 만들고 있는가?")</p>
 ${tbl(['방법', '설명', '특징'], [['동료 검토 (Peer Review)', '작성자가 설명하고 동료들이 결함을 찾음', '비교적 비공식'], ['워크 스루 (Walk Through)', '검토 회의 전 명세서를 배포, 개발자·동료가 모여 결함 발견 (짧은 회의)', '<mark>비공식</mark>, 결함 발견이 목적(해결은 나중), 작성자 중심'], ['인스펙션 (Inspection)', '작성자 외 <b>전문가(훈련된 검토자)</b>가 공식 절차·체크리스트로 결함 검사', '<mark>공식적·엄격</mark>, 역할 분담(중재자·작성자·판독자·기록자), 결함 통계'], ['프로토타이핑', '시제품으로 사용자가 직접 확인', ''], ['테스트 케이스 생성', '요구사항에서 테스트를 만들어 검증 가능성 확인', ''], ['CASE 도구', '명세의 일관성·완전성 자동 점검', '']])}
@@ -205,7 +205,9 @@ ${tbl(['구성', '내용'], [['사물 (Things)', '구조 사물(클래스·유�
 ${fig('umlRel', 'UML 6가지 관계')}
 ${tbl(['관계', '표기', '의미', '코드 예'], [['의존 (Dependency)', '점선 + 열린 화살표', 'A가 B를 <b>일시적으로 사용</b>(매개변수·지역변수). B가 바뀌면 A에 영향', '<code>void f(B b)</code>'], ['연관 (Association)', '실선(+화살표)', '오랜 기간 관계(필드로 참조). 다중성 표기', '<code>B b;</code>'], ['일반화 (Generalization)', '실선 + 속 빈 삼각형', '<b>is-a</b>, 상속. 부모↔자식', '<code>extends</code>'], ['실체화 (Realization)', '점선 + 속 빈 삼각형', '인터페이스를 구현', '<code>implements</code>'], ['집합 (Aggregation)', '속 빈 마름모', 'has-a, 전체-부분, <b>생명주기 독립</b>', '팀–선수'], ['합성 (Composition)', '속 찬 마름모', 'part-of, <b>전체가 사라지면 부분도 소멸</b>', '집–방']])}
 ${warn('<b>일반화</b>는 클래스↔클래스 상속(실선), <b>실체화</b>는 클래스→인터페이스 구현(점선). 삼각형 머리는 항상 "부모/인터페이스" 쪽!')}
-${mn('결합 강도: 의존 &lt; 연관 &lt; 집합 &lt; 합성 / 점선 = 약한 관계(의존·실체화)')}`,
+${mn('결합 강도: 의존 &lt; 연관 &lt; 집합 &lt; 합성 / 점선 = 약한 관계(의존·실체화)')}
+<h2>실습: 관계 맞추기</h2>
+${fig('relQuiz', '선과 화살표 모양만 보고 UML 관계를 고르는 연습')}`,
     cards: [['의존 관계 표기', '점선 + 열린 화살표 (일시적 사용)'], ['일반화 관계 표기', '실선 + 속 빈 삼각형 (is-a, 상속)'], ['집합과 합성의 차이', '집합=생명주기 독립(빈 마름모), 합성=전체와 생명주기 동일(찬 마름모)']] });
 
   addTopic({ id: 'uml-struct', subj: 1, group: G3, title: '구조(정적) 다이어그램', en: 'Structural Diagrams',
@@ -244,7 +246,7 @@ ${tbl(['요소', '표기', '설명'], [['액션/활동', '둥근 사각형', '�
     cards: [['활동 다이어그램에서 병렬 처리 표현 요소', '포크(Fork)와 조인(Join) 막대'], ['스윔레인이란?', '활동의 책임 주체(역할·부서)별 영역 구분']] });
 
   addTopic({ id: 'uml-usecase', subj: 1, group: G3, title: '유스케이스 다이어그램의 구성요소', en: 'Use Case Diagram',
-    exam: '구성요소 4가지(시스템 범위·액터·유스케이스·관계), include vs extend 방향!',
+    exam: '구성요소 4가지(시스템 범위·액터·유스케이스·관계), include와 extend의 방향 구분.',
     body: `
 <p>사용자(액터) 관점에서 시스템이 제공하는 <b>기능(유스케이스)</b>을 표현하는 요구사항 분석 도구입니다.</p>
 ${fig('umlUsecase', '유스케이스 다이어그램 예시')}

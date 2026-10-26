@@ -11,6 +11,7 @@ const load = f => vm.runInContext(readFileSync(new URL('../' + f, import.meta.ur
 ctx.document = { createElement: () => ({}) };
 // interactive.js 는 DOM 의존 함수 정의만 하므로 로드 가능
 load('js/interactive.js');
+load('js/labs.js');
 ['js/data/subject1.js', 'js/data/subject1b.js', 'js/data/subject2.js', 'js/data/subject2b.js', 'js/data/scope.js', 'js/data/quiz.js'].forEach(load);
 
 const { TOPICS, QUIZ, SCOPE, PATTERNS } = ctx;
