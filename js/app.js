@@ -143,6 +143,7 @@
     const topic = params.get('topic');
     const topicOpts = TOPICS.map(t => `<option value="${t.id}" ${t.id === topic ? 'selected' : ''}>${t.subj}과목 · ${esc(t.title)}</option>`).join('');
     return `<div class="qwrap"><h1>문제풀이</h1><p class="en">보기 순서는 매번 섞입니다. 틀린 문제는 오답 노트에 자동 저장됩니다.</p>
+      <div class="callout warn"><b>교재 문제집 추천</b>이곳의 문제는 개념 확인용 예상문제입니다. 문제 풀이는 <b>교재 기출문제집 1과목·2과목</b>을 푸는 것을 더 추천합니다(교수님 권장). 풀다가 막힌 주제를 여기서 찾아 복습하세요.</div>
       <div class="card"><div style="display:grid;gap:10px">
         <label>범위 <select id="qScope"><option value="all">전체</option><option value="1">1과목</option><option value="2">2과목</option><option value="topic" ${topic ? 'selected' : ''}>특정 주제</option><option value="prof">교수님 언급 문제(영어·복잡도·패턴)</option><option value="wrong">오답 노트 (${state.wrong.length})</option></select></label>
         <label id="qTopicW" style="${topic ? '' : 'display:none'}">주제 <select id="qTopic">${topicOpts}</select></label>
