@@ -239,7 +239,7 @@
 
   /* ───────── 결합도 · 응집도: 클릭하여 예제 보기 ───────── */
   const LAD = {
-    coupling: { top: '강함(나쁨)', bot: '약함(좋음)', rows: [
+    coupling: { top: '약함(좋음)', bot: '강함(나쁨)', rows: [
       ['내용', 'Content', 'e', '다른 모듈의 내부 데이터·코드를 직접 참조·수정하거나 중간으로 분기', '// 모듈 A가 모듈 B의 내부 상태를 직접 조작\nB.internalCounter++;        // 내부 변수 직접 수정\ngoto B_middle_of_function;  // 다른 모듈 중간으로 점프', '다른 모듈의 "내부"를 직접'],
       ['공통', 'Common', 'e', '여러 모듈이 같은 전역(공유) 데이터 영역을 사용', 'int g_config;                 // 전역 변수\nvoid a() { g_config = 1; }\nvoid b() { use(g_config); }', '전역 변수·공유 메모리'],
       ['외부', 'External', 'c', '외부에서 정한 데이터 형식·통신 프로토콜·장치 인터페이스를 공유', '// 두 모듈이 같은 파일 포맷(CSV 컬럼 순서)에 의존\nwriteReport(csvFormatV1);\nreadReport(csvFormatV1);', '외부 포맷·프로토콜·장치'],
@@ -247,7 +247,7 @@
       ['스탬프', 'Stamp', 'a', '자료 구조(레코드·객체)를 통째로 전달하고 일부만 사용', 'void ship(Order o) {      // Order 전체를 받고\n  deliver(o.address);       // 주소만 사용\n}', '구조체·객체 통째로 전달'],
       ['자료', 'Data', 'b', '필요한 값만 매개변수로 전달 (가장 바람직)', 'int add(int a, int b) { return a + b; }', '필요한 값만 인자로'],
     ] },
-    cohesion: { top: '강함(좋음)', bot: '약함(나쁨)', rows: [
+    cohesion: { top: '약함(나쁨)', bot: '강함(좋음)', rows: [
       ['기능적', 'Functional', 'b', '모든 요소가 하나의 기능만 수행 (최선)', 'int calcTax(int price) {\n  return price * 10 / 100;   // 세금 계산 하나만\n}', '단일 기능'],
       ['순차적', 'Sequential', 'b', '한 요소의 출력이 다음 요소의 입력이 됨', 'raw   = read();\nclean = parse(raw);        // 앞 출력 → 뒤 입력\nsave(clean);', '출력 → 입력 파이프라인'],
       ['교환(통신)적', 'Communicational', 'f', '같은 입력 또는 출력 자료를 사용하는 요소들', 'void report(Record r) {\n  print(r);                 // 같은 자료 r 을\n  log(r);                   // 함께 사용\n}', '같은 자료를 공유'],
@@ -257,10 +257,11 @@
       ['우연적', 'Coincidental', 'e', '서로 관련 없는 기능들이 모여 있음 (최악)', 'void misc() {\n  calcTax(); sendMail(); drawLogo();   // 서로 무관\n}', '관련 없는 기능 모음'],
     ] },
   };
+  Object.values(LAD).forEach(d => d.rows.reverse());   // 약함 → 강함 순
   D.ladderLab = (el, arg) => {
     const d = LAD[arg || 'coupling'], n = d.rows.length;
     let cur = 0;
-    el.innerHTML = `<div class="lad"><div class="lad-l"><div class="lad-ax">${d.top}</div>${d.rows.map((r, i) => `<button class="lad-r" data-i="${i}" style="--w:${100 - i * (55 / (n - 1))}%;--c:var(--${r[2]})"><b>${i + 1}. ${r[0]}</b><small>${r[1]}</small></button>`).join('')}<div class="lad-ax">${d.bot}</div></div><div class="lad-d" id="ld"></div></div>`;
+    el.innerHTML = `<div class="lad"><div class="lad-l"><div class="lad-ax">${d.top}</div>${d.rows.map((r, i) => `<button class="lad-r" data-i="${i}" style="--w:${100 - (n - 1 - i) * (55 / (n - 1))}%;--c:var(--${r[2]})"><b>${i + 1}. ${r[0]}</b><small>${r[1]}</small></button>`).join('')}<div class="lad-ax">${d.bot}</div></div><div class="lad-d" id="ld"></div></div>`;
     const draw = () => {
       el.querySelectorAll('.lad-r').forEach((b, i) => b.classList.toggle('on', i === cur));
       const r = d.rows[cur];

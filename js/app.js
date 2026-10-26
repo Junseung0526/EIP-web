@@ -76,6 +76,7 @@
     return `<header class="hero"><p class="crumbs">1·2과목 중간고사 대비 · 기출 범위 2024/2 – 2025/8</p><h1>정보처리기사 학습 노트</h1>
       <p class="lead">교수님이 지정한 <b>${SCOPE.length}개 항목</b>을 개념 설명, 도해, 시뮬레이터, 예상문제로 정리했습니다. 왼쪽 목차에서 장별로 읽거나 아래 목차에서 바로 이동할 수 있습니다.</p>
       <div class="hero-act">${next ? `<a class="btn pri" href="#/t/${next.id}">${done ? '이어서 학습' : '처음부터 학습'} — ${NUM[next.id]} ${esc(next.title)}</a>` : ''}<a class="btn" href="#/scope">시험 범위 체크리스트</a><a class="btn" href="#/quiz">문제풀이</a></div></header>
+      ${glSeen() ? '' : `<aside class="gl-promo" role="region" aria-label="영어 병기 안내"><button type="button" class="gl-x" data-gl-x aria-label="닫기" title="닫기">✕</button><div class="gl-t"><span class="gl-tag">NEW</span><h2>영어 용어도 같이 외우세요</h2><p>정처기 필기에는 <b>Coupling · Encapsulation · Waterfall</b> 같은 영어 용어가 자주 나옵니다. 보이는 방식을 골라 보세요.</p></div><div class="seg" role="group" aria-label="영어 병기 방식">${GL_MODES.map(m => `<button type="button" data-gl-set="${m[0]}">${m[2] === '호버' ? '마우스 올리면' : m[2] === '항상' ? '항상 보이기' : '끄기'}</button>`).join('')}</div><small>언제든 상단 바의 <b>EN</b> 버튼으로 바꿀 수 있어요</small></aside>`}
       <div class="stat"><div class="card"><div class="n">${pct}%</div><div class="l">학습 진도 (${done}/${tot})</div></div><div class="card"><div class="n">${QUIZ.length}</div><div class="l">문제 은행</div></div><div class="card"><div class="n">${state.answered ? rate + '%' : '–'}</div><div class="l">누적 정답률</div></div><div class="card"><div class="n">${state.wrong.length}</div><div class="l">오답 노트</div></div></div>
       <h2 class="plain">교수님 강조 항목</h2><ul class="quick">${hot.map(([id, l]) => `<li><a href="#/t/${id}">${l}</a></li>`).join('')}</ul>
       <div class="books">${book(1)}${book(2)}</div>
@@ -206,8 +207,8 @@
       ['UML 관계', '의존=점선 열린화살표 / 일반화=실선 빈삼각형 / 실체화=점선 빈삼각형 / 집합=빈마름모 / 합성=찬마름모', 'uml-rel'],
       ['UI 원칙', '직·유·학·유 (직관성·유효성·학습성·유연성)', 'ui-principles'],
       ['25010 품질', '기능적합·성능효율·호환·사용·신뢰·보안·유지보수·이식', 'iso25000'],
-      ['결합도(강→약)', '내공외제스자', 'coupling'],
-      ['응집도(강→약)', '기순교절시논우', 'cohesion'],
+      ['결합도(약→강)', '자스제외공내', 'coupling'],
+      ['응집도(약→강)', '우논시절교순기', 'cohesion'],
       ['SOLID', 'SRP 단일책임 · OCP 개방폐쇄 · LSP 리스코프치환 · ISP 인터페이스분리 · DIP 의존역전', 'solid'],
       ['GoF 생성 5', '추빌팩프싱', 'gof-creational'],
       ['GoF 구조 7', '어브컴데퍼플프', 'gof-structural'],
@@ -270,6 +271,65 @@
   }
 
   /* ───── 라우터 ───── */
+  /* 영어 병기: 모드(hover 마우스 올리면 / always 항상 / off 끔)는 html[data-gl]로 CSS가 처리 */
+  const GL_MODES = [['hover', '마우스를 올리면 영어 표시', '호버'], ['always', '영어 항상 표시', '항상'], ['off', '영어 표시 끔', '끔']];
+  let glMode = 'hover';
+  try { glMode = localStorage.getItem('eip-gl') || 'hover'; } catch (e) { /* 무시 */ }
+  if (!GL_MODES.some(m => m[0] === glMode)) glMode = 'hover';
+  function applyGl() {
+    document.documentElement.dataset.gl = glMode;
+    $$('[data-gl-set]').forEach(b => b.classList.toggle('on', b.dataset.glSet === glMode));
+    const btn = $('#glBtn'), m = GL_MODES.find(x => x[0] === glMode);
+    btn.title = btn.ariaLabel = '영어 병기: ' + m[1] + ' (클릭하면 전환)';
+    btn.dataset.mode = glMode; btn.innerHTML = `<b>EN</b> ${m[2]}`;
+  }
+  const termRe = (() => {
+    const keys = Object.keys(window.TERMS || {}).sort((x, y) => y.length - x.length);
+    return keys.length ? new RegExp('(?<![가-힣A-Za-z])(' + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'g') : null;
+  })();
+  function markGloss(id) {
+    const g = (window.GLOSSARY || {})[id];
+    if (g) $$('td,th,b', main).forEach(el => { const en = g[el.textContent.trim()]; if (en) { el.dataset.en = en; el.classList.add('gl', 'first'); } });
+    if (!termRe) return;
+    const seen = new Set(), walker = document.createTreeWalker($('.article', main) || main, NodeFilter.SHOW_TEXT, {
+      acceptNode: n => n.parentElement.closest('svg,pre,code,button,script,style,.th,.crumbs,.gl,[data-en],[data-diagram],.rail,.pager,.donebar') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
+    }), nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      const txt = n.nodeValue; termRe.lastIndex = 0;
+      if (!termRe.test(txt)) return;
+      const frag = document.createDocumentFragment(); let last = 0; termRe.lastIndex = 0;
+      for (let m; (m = termRe.exec(txt));) {
+        frag.append(txt.slice(last, m.index));
+        const sp = document.createElement('span'), en = window.TERMS[m[1]];
+        sp.className = 'gl' + (seen.has(en) ? '' : ' first'); seen.add(en); sp.dataset.en = en; sp.textContent = m[1];
+        frag.append(sp); last = m.index + m[1].length;
+      }
+      frag.append(txt.slice(last)); n.replaceWith(frag);
+    });
+  }
+  const tip = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'en-tip' }));
+  document.addEventListener('mouseover', e => {
+    const el = e.target.closest && e.target.closest('[data-en]');
+    if (!el || glMode === 'off' || (glMode === 'always' && el.classList.contains('first'))) return;
+    tip.textContent = el.dataset.en; tip.classList.add('on');
+    const r = el.getBoundingClientRect(), w = tip.offsetWidth;
+    tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left)) + 'px';
+    tip.style.top = (r.top >= tip.offsetHeight + 12 ? r.top - tip.offsetHeight - 6 : r.bottom + 6) + 'px';
+  });
+  document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('[data-en]')) tip.classList.remove('on'); });
+  function glSeen() { try { return localStorage.getItem('eip-gl-x') === '1'; } catch (e) { return false; } }
+  const setGl = m => {
+    glMode = m;
+    try { localStorage.setItem('eip-gl', glMode); } catch (e) { /* 무시 */ }
+    applyGl(); tip.classList.remove('on');
+  };
+  $('#glBtn').onclick = () => setGl(GL_MODES[(GL_MODES.findIndex(m => m[0] === glMode) + 1) % GL_MODES.length][0]);
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-gl-set]'); if (b) setGl(b.dataset.glSet);
+    const x = e.target.closest && e.target.closest('[data-gl-x]');
+    if (x) { try { localStorage.setItem('eip-gl-x', '1'); } catch (err) { /* 무시 */ } x.closest('.gl-promo').remove(); } });
+  applyGl();
+
   function route() {
     App.timers.forEach(clearInterval); App.timers.length = 0; App.key = null;
     if (App.io) { App.io.disconnect(); App.io = null; }
@@ -278,7 +338,7 @@
     const [a, b] = path.split('/');
     let html = '', after = null, cur = null;
     main.dataset.cur = b || '';
-    if (a === 't') { cur = b; html = pageTopic(b); after = () => { mountDiagrams(main); buildToc(); $$('[data-done]', main).forEach(btn => btn.onclick = () => { state.done[b] ? delete state.done[b] : (state.done[b] = 1); save(); route(); }); }; }
+    if (a === 't') { cur = b; html = pageTopic(b); after = () => { mountDiagrams(main); buildToc(); markGloss(b); $$('[data-done]', main).forEach(btn => btn.onclick = () => { state.done[b] ? delete state.done[b] : (state.done[b] = 1); save(); route(); }); }; }
     else if (a === 'scope') html = pageScope();
     else if (a === 'quiz') { html = pageQuiz(params); after = initQuiz; }
     else if (a === 'cards') { const r = pageCards(params); html = r.html; after = () => initCards(r.deck); }
@@ -288,7 +348,7 @@
     const y = window.scrollY;
     main.innerHTML = a === 't' ? `<div class="page">${html}</div>` : `<div class="page solo"><article class="article">${html}</article></div>`;
     wrapCallouts();
-    renderSide(cur); setNavTop(a || '');
+    renderSide(cur); setNavTop(a || ''); applyGl();
     if (after) after();
     wrapCallouts();
     document.title = (cur && byId[cur] ? byId[cur].title + ' · ' : '') + '정보처리기사 학습 노트';
