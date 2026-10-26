@@ -89,7 +89,7 @@
     const i = TOPICS.indexOf(t), prev = TOPICS[i - 1], next = TOPICS[i + 1];
     const qn = QUIZ.filter(q => q.t === id).length;
     const doneBtn = `<button class="btn ${state.done[id] ? 'on' : 'pri'}" data-done>${state.done[id] ? '학습 완료 (취소)' : '학습 완료로 표시'}</button>`;
-    return `<article class="article"><header class="th"><p class="crumbs">${SUBJ[t.subj]} · ${GNUM[t.subj + t.group]}장 ${esc(t.group)} · ${NUM[id]}</p><h1>${esc(t.title)}</h1><p class="en">${esc(t.en || '')}</p></header>
+    return `<article class="article"><header class="th"><p class="crumbs">${SUBJ[t.subj].split(' · ')[0]} / ${GNUM[t.subj + t.group]} ${esc(t.group)} / <span style="color:var(--accent)">${NUM[id]}</span></p><h1>${esc(t.title)}</h1>${t.en ? `<span class="en">${esc(t.en)}</span>` : ''}</header>
       ${t.exam ? `<div class="callout exam"><b>출제 포인트</b>${t.exam}</div>` : ''}
       ${t.body}
       <div class="donebar">${doneBtn}${qn ? `<a class="btn" href="#/quiz?topic=${id}">이 주제 문제 (${qn})</a>` : ''}${t.cards.length ? `<a class="btn" href="#/cards?topic=${id}">암기카드 (${t.cards.length})</a>` : ''}</div>
@@ -297,10 +297,11 @@
   }
   window.addEventListener('hashchange', route);
   document.addEventListener('keydown', e => App.key && App.key(e));
+  document.addEventListener('keydown', e => { if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) { e.preventDefault(); $('#search').focus(); } });
   $('#menuBtn').onclick = () => document.body.classList.toggle('menu');
   $('#scrim').onclick = () => document.body.classList.remove('menu');
   $('#themeBtn').onclick = () => {
-    const root = document.documentElement, dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme:dark)').matches;
+    const root = document.documentElement, dark = (root.dataset.theme || 'dark') === 'dark';
     root.dataset.theme = dark ? 'light' : 'dark';
     try { localStorage.setItem('eip-theme', root.dataset.theme); } catch (e) { /* 무시 */ }
   };
