@@ -40,7 +40,7 @@ class ConcreteCreator extends Creator {
     intent: '원본 객체를 복제(clone)하여 새로운 객체를 생성한다. 생성 비용이 크거나 구체 클래스를 몰라도 복사할 수 있다.',
     keys: ['복제(Clone)', '원형을 복사해서 생성', 'Prototype Registry', 'new 대신 clone()'],
     ex: 'Object.clone(), 게임 몬스터 복제, 문서 템플릿 복사',
-    cmp: '개발 "프로토타입 모형"(시제품)과 이름만 같고 전혀 다른 개념!',
+    cmp: '개발 "프로토타입 모형"(시제품)과 이름만 같고 전혀 다른 개념입니다.',
     spec: { nodes: [N('cl', 'Client', 0, 0, [], { c: 'g' }), N('p', 'Prototype', 1, 0, ['clone(): Prototype'], { k: 'i', c: 'a' }), N('c1', 'ConcretePrototype1', 0.5, 1, ['clone()'], { c: 'b' }), N('c2', 'ConcretePrototype2', 1.5, 1, ['clone()'], { c: 'b' })], edges: [['cl', 'p', 'assoc'], ['c1', 'p', 'real'], ['c2', 'p', 'real']] },
   });
   add('c', 'singleton', '싱글톤', 'Singleton', {
@@ -238,9 +238,9 @@ while (it.hasNext()) { System.out.println(it.next()); }`,
   <h3>${i + 1}. ${p.kr} <small style="color:var(--muted);font-weight:500">${p.en}</small></h3>
   <dl>
     <dt>의도</dt><dd>${p.intent}</dd>
-    <dt>시험 키워드</dt><dd>${p.keys.map(k => `<mark>${k}</mark>`).join(' · ')}</dd>
+    <dt>출제 키워드</dt><dd>${p.keys.map(k => `<mark>${k}</mark>`).join(' · ')}</dd>
     <dt>사용 예</dt><dd>${p.ex}</dd>
-    <dt>헷갈릴 때</dt><dd>${p.cmp}</dd>
+    <dt>구분</dt><dd>${p.cmp}</dd>
   </dl>
   <figure class="fig"><div class="scroll">${S.classDiagram(Object.assign({ label: p.kr + ' 구조' }, p.spec))}</div><figcaption>${p.kr}(${p.en}) 구조 — 실선 삼각형=상속, 점선 삼각형=구현, 마름모=집합/합성, 점선 화살표=의존</figcaption></figure>
   ${p.code ? `<pre><code>${S.esc(p.code)}</code></pre>` : ''}

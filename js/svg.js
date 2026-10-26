@@ -11,7 +11,7 @@
       lines.map((l, i) => `<tspan x="${n1(x)}" dy="${i ? lh : 0}">${esc(l)}</tspan>`).join('') + '</text>';
   }
   /** 사각형. o: c(class) r(radius) */
-  function R(x, y, w, h, o = {}) { return `<rect x="${n1(x)}" y="${n1(y)}" width="${n1(w)}" height="${n1(h)}" rx="${o.r == null ? 8 : o.r}" class="bx${o.c ? ' ' + o.c : ''}"${o.id ? ` id="${o.id}"` : ''}/>`; }
+  function R(x, y, w, h, o = {}) { return `<rect x="${n1(x)}" y="${n1(y)}" width="${n1(w)}" height="${n1(h)}" rx="${o.r == null ? 3 : o.r}" class="bx${o.c ? ' ' + o.c : ''}"${o.id ? ` id="${o.id}"` : ''}/>`; }
   /** 선. o: c(class) end start (marker 이름: arr, arr-a, open, tri, dia, diaf) */
   function L(x1, y1, x2, y2, o = {}) {
     return `<line x1="${n1(x1)}" y1="${n1(y1)}" x2="${n1(x2)}" y2="${n1(y2)}" class="ln${o.c ? ' ' + o.c : ''}"` +
@@ -26,7 +26,7 @@
   function PG(pts, o = {}) { return `<polygon points="${pts.map(p => p.map(n1).join(',')).join(' ')}" class="bx${o.c ? ' ' + o.c : ''}"/>`; }
   function G(inner, o = {}) { return `<g${o.c ? ` class="${o.c}"` : ''}${o.id ? ` id="${o.id}"` : ''}${o.t ? ` transform="${o.t}"` : ''}${o.data ? ' ' + o.data : ''}>${inner}</g>`; }
   /** 라벨이 있는 박스 */
-  function B(x, y, w, h, label, o = {}) { return R(x, y, w, h, o) + T(x + w / 2, y + h / 2, label, { c: o.tc, s: o.s, b: o.b, lh: o.lh }); }
+  function B(x, y, w, h, label, o = {}) { return R(x, y, w, h, o) + T(x + w / 2, y + h / 2, label, { c: o.tc || (/\bhot\b/.test(o.c || '') ? 'w' : undefined), s: o.s, b: o.b, lh: o.lh }); }
   function svg(w, h, inner, o = {}) { return `<svg class="dg" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(o.label || '도해')}"${o.id ? ` id="${o.id}"` : ''}${o.maxw ? ` style="max-width:${o.maxw}px"` : ''}>${inner}</svg>`; }
   /** 화살표(선+머리) 편의 함수 */
   const A = (x1, y1, x2, y2, o = {}) => L(x1, y1, x2, y2, Object.assign({ end: 'arr' }, o));

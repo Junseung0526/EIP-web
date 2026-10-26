@@ -63,7 +63,7 @@
     i = 0; (function pos(n) { if (!n.c) n.x = 40 + i++ * 62; else { n.c.forEach(pos); n.x = (n.c[0].x + n.c[n.c.length - 1].x) / 2; } n.y = 40 + n.d * 72; })(tree);
     const W = 40 * 2 + (i - 1) * 62, H = 40 * 2 + 3 * 72 - 10;
     let mode = 'deg', sel = null;
-    el.innerHTML = `<div class="ctl">${seg([['deg', '차수(Degree)'], ['lv', '레벨(Level)'], ['leaf', '단말/비단말']], 'deg', 'm')} <small>노드를 클릭해 보세요</small></div><div class="scroll" id="tsvg"></div><div class="note" id="tinfo"></div><div class="out" id="tsum"></div>`;
+    el.innerHTML = `<div class="ctl">${seg([['deg', '차수(Degree)'], ['lv', '레벨(Level)'], ['leaf', '단말/비단말']], 'deg', 'm')} <small>노드를 선택하면 상세 표시</small></div><div class="scroll" id="tsvg"></div><div class="note" id="tinfo"></div><div class="out" id="tsum"></div>`;
     const maxDeg = Math.max(...all.map(n => n.deg)), leaves = all.filter(n => n.leaf).map(n => n.v), height = Math.max(...all.map(n => n.d)) + 1;
     const draw = () => {
       let s = '';
@@ -127,7 +127,7 @@
       el.querySelector('#vsvg').innerHTML = svg(lay.w, lay.h + 20, s, { maxw: 600, label: NAME[mode][0] + ' 경로 애니메이션' });
       el.querySelector('#vout').innerHTML = `${NAME[mode][0]} 결과: <b>${visited.join(' → ') || '(시작 전)'}</b>`;
       const q = step > 0 ? seq[step - 1] : null;
-      el.querySelector('#vnote').innerHTML = step === 0 ? `규칙: <b>${NAME[mode][1]}</b> — 각 노드의 <b>${NAME[mode][2]}</b>(큰 점)을 외곽선 따라 지나갈 때 방문` : step >= seq.length ? `완료! 방문 순서 = ${visited.join(', ')}` : `${q.n.v}의 ${q.t === 'pre' ? '왼쪽' : q.t === 'in' ? '아래' : '오른쪽'} 점 도착${q.t === mode ? ` → <b>${q.n.v} 방문</b>` : ' (방문 안 함)'}`;
+      el.querySelector('#vnote').innerHTML = step === 0 ? `규칙: <b>${NAME[mode][1]}</b> — 각 노드의 <b>${NAME[mode][2]}</b>(큰 점)을 외곽선 따라 지나갈 때 방문` : step >= seq.length ? `완료. 방문 순서 = ${visited.join(', ')}` : `${q.n.v}의 ${q.t === 'pre' ? '왼쪽' : q.t === 'in' ? '아래' : '오른쪽'} 점 도착${q.t === mode ? ` → <b>${q.n.v} 방문</b>` : ' (방문 안 함)'}`;
     };
     const setStep = v => { step = Math.max(0, Math.min(seq.length, v)); draw(); };
     const playBtn = el.querySelector('#t2');
@@ -215,8 +215,8 @@
       el.querySelector('#slog').innerHTML = log.slice(-5).join(' · ') || '&nbsp;';
     };
     const v = () => el.querySelector('#sv').value.trim() || '?';
-    el.querySelector('#sp').onclick = () => { if (st.length >= CAP) msg = '⚠ Overflow! 스택이 가득 찼습니다'; else { const x = v(); st.push(x); msg = `PUSH(${x}) 완료`; log.push(`push ${x}`); } draw(); };
-    el.querySelector('#so').onclick = () => { if (!st.length) msg = '⚠ Underflow! 스택이 비어 있습니다'; else { const x = st.pop(); msg = `POP → ${x} (가장 나중에 들어온 값이 먼저 나옴)`; log.push(`pop ${x}`); } draw(); };
+    el.querySelector('#sp').onclick = () => { if (st.length >= CAP) msg = 'Overflow — 스택이 가득 찼습니다'; else { const x = v(); st.push(x); msg = `PUSH(${x}) 완료`; log.push(`push ${x}`); } draw(); };
+    el.querySelector('#so').onclick = () => { if (!st.length) msg = 'Underflow — 스택이 비어 있습니다'; else { const x = st.pop(); msg = `POP → ${x} (가장 나중에 들어온 값이 먼저 나옴)`; log.push(`pop ${x}`); } draw(); };
     el.querySelector('#sk').onclick = () => { msg = st.length ? `PEEK → ${st[st.length - 1]} (삭제하지 않고 TOP만 확인)` : '비어 있음'; draw(); };
     el.querySelector('#sc').onclick = () => { st = []; log = []; msg = '스택을 비웠습니다 (TOP = −1)'; draw(); };
     draw();
@@ -328,7 +328,7 @@
         if (coll === 'chain') { chain[h].push(k); note = chain[h].length > 1 ? `충돌 → ${h}번 버킷 뒤에 연결(체인)` : `${h}번 버킷에 저장`; }
         else {
           while (slot[idx] !== null && tries < m) { tries++; idx = coll === 'linear' ? (h + tries) % m : (h + tries * tries) % m; }
-          if (tries >= m) note = '⚠ 테이블 가득/저장 실패(오버플로)'; else { slot[idx] = k; note = tries ? `충돌 ${tries}회 → ${coll === 'linear' ? '다음 칸' : tries + '² 칸'}씩 조사해 ${idx}번 저장` : `${idx}번 저장`; }
+          if (tries >= m) note = '테이블 가득 참 / 저장 실패(오버플로)'; else { slot[idx] = k; note = tries ? `충돌 ${tries}회 → ${coll === 'linear' ? '다음 칸' : tries + '² 칸'}씩 조사해 ${idx}번 저장` : `${idx}번 저장`; }
         }
         rows.push([k, how, h, note]);
       });
@@ -357,7 +357,7 @@
   "student": true,
   "scores": [90, 85, 77],
   "address": { "city": "Seoul", "zip": null }
-}</textarea><div class="ctl"><button class="btn pri sm" id="jgo">구조 분석</button><small>틀린 JSON(작은따옴표, 마지막 쉼표, 따옴표 없는 키)을 넣어 오류도 확인해 보세요</small></div><div id="jres"></div>`;
+}</textarea><div class="ctl"><button class="btn pri sm" id="jgo">구조 분석</button><small>작은따옴표, 마지막 쉼표, 따옴표 없는 키는 오류로 처리됩니다.</small></div><div id="jres"></div>`;
     const tp = v => v === null ? ['null', 'e'] : Array.isArray(v) ? ['array', 'd'] : typeof v === 'object' ? ['object', 'a'] : typeof v === 'string' ? ['string', 'b'] : typeof v === 'number' ? ['number', 'c'] : ['boolean', 'f'];
     const walk = (v, key) => {
       const [t, c] = tp(v);
