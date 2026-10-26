@@ -293,8 +293,8 @@ summary{cursor:pointer}
 }
 @media (max-width:900px){
   #menuBtn{display:inline-block}
-  #side{position:fixed;left:0;top:var(--top-h);z-index:60;transform:translateX(-102%);transition:transform .2s;width:min(86vw,320px);background:var(--bg);box-shadow:8px 0 32px rgba(0,0,0,.5)}
-  body.menu #side{transform:none}
+  #side{position:fixed;left:0;top:var(--top-h);z-index:60;transform:translateX(-102%);transition:transform .2s;width:min(86vw,320px);background:var(--bg)}
+  body.menu #side{transform:none;box-shadow:8px 0 32px rgba(0,0,0,.5)}
   body.menu #scrim{display:block;position:fixed;inset:var(--top-h) 0 0 0;background:rgba(0,0,0,.55);z-index:55}
   .page{padding:26px 16px 90px}
   .top{padding:0 12px;gap:10px}
@@ -306,6 +306,9 @@ summary{cursor:pointer}
   .fig>div[data-diagram]{overflow-x:auto}
   .fig svg.dg{min-width:640px}
   .tw table{min-width:600px}
+  .tw table:not(:has(tr>*:nth-child(4))){min-width:0}
+  p.en{border-radius:12px;line-height:1.55}
+  .fig>div[data-diagram]:has(svg.dg)::before{content:"← 옆으로 밀어서 전체 보기 →";display:block;position:sticky;left:0;padding:6px 12px 0;font-size:11px;color:var(--muted)}
   .tw td.k{white-space:normal}
   h1{font-size:28px}
   .hero h1{font-size:30px}
@@ -313,6 +316,7 @@ summary{cursor:pointer}
 @media (max-width:560px){
   .topnav{display:none}
   .brand b{display:none}
+  .search input{font-size:14px}
   .pat dl{grid-template-columns:1fr}
   .pat{padding:16px 14px 8px}
   .pager{grid-template-columns:1fr}
@@ -520,8 +524,8 @@ summary{cursor:pointer}
 }
 @media (max-width:900px){
   #menuBtn{display:inline-block}
-  #side{position:fixed;left:0;top:var(--top-h);z-index:60;transform:translateX(-102%);transition:transform .2s;width:min(86vw,320px);background:var(--bg);box-shadow:8px 0 32px rgba(0,0,0,.5)}
-  body.menu #side{transform:none}
+  #side{position:fixed;left:0;top:var(--top-h);z-index:60;transform:translateX(-102%);transition:transform .2s;width:min(86vw,320px);background:var(--bg)}
+  body.menu #side{transform:none;box-shadow:8px 0 32px rgba(0,0,0,.5)}
   body.menu #scrim{display:block;position:fixed;inset:var(--top-h) 0 0 0;background:rgba(0,0,0,.55);z-index:55}
   .page{padding:26px 16px 90px}
   .top{padding:0 12px;gap:10px}

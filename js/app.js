@@ -321,6 +321,16 @@
     tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left)) + 'px';
     tip.style.top = (r.top >= tip.offsetHeight + 12 ? r.top - tip.offsetHeight - 6 : r.bottom + 6) + 'px';
   });
+  /* 터치 기기: 탭하면 말풍선을 잠깐 보여 줌(호버가 없으므로) */
+  let tipTimer = 0;
+  document.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'touch') return;
+    const el = e.target.closest && e.target.closest('[data-en]');
+    clearTimeout(tipTimer);
+    if (!el || glMode === 'off' || (glMode === 'always' && el.classList.contains('first'))) { tip.classList.remove('on'); return; }
+    el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    tipTimer = setTimeout(() => tip.classList.remove('on'), 2600);
+  });
   document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('[data-en]')) tip.classList.remove('on'); });
   function glSeen() { try { return localStorage.getItem('eip-gl-x') === '1'; } catch (e) { return false; } }
   const setGl = m => {
