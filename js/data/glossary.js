@@ -9,7 +9,7 @@ window.TERMS = {
   /* 개발 모형 · 프로세스 */
   '폭포수 모형': 'Waterfall Model', '나선형 모형': 'Spiral Model', 
   '스프린트 리뷰': 'Sprint Review', 
-  '제품 백로그': 'Product Backlog', '제품 책임자': 'Product Owner', '일일 스크럼': 'Daily Scrum', '회고': 'Retrospective',
+  '제품 백로그': 'Product Backlog', '제품 책임자': 'Product Owner', '스크럼 마스터': 'Scrum Master', '일일 스크럼': 'Daily Scrum', '회고': 'Retrospective',
   '페어 프로그래밍': 'Pair Programming', '지속적 통합': 'Continuous Integration', '테스트 주도 개발': 'Test-Driven Development', 
   '소규모 릴리즈': 'Small Releases', '단순 설계': 'Simple Design', '위험 분석': 'Risk Analysis', '소프트웨어 생명주기': 'SDLC',
   /* 요구사항 · 분석 */

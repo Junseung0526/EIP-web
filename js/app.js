@@ -301,7 +301,8 @@
       const frag = document.createDocumentFragment(); let last = 0; termRe.lastIndex = 0;
       for (let m; (m = termRe.exec(txt));) {
         const after = txt.slice(m.index + m[1].length);
-        if (/^\s*\(/.test(after) || (m[1] === '트리' && after[0] === '거')) continue;   // 이미 뒤에 괄호로 영어가 붙었거나 '트리거'인 경우는 건너뜀
+        if (/[A-Za-z)]\s*\($/.test(txt.slice(0, m.index))) continue;   // 'Pair Programming (짝 프로그래밍)'처럼 영어가 앞에 이미 있는 괄호 속 한글은 건너뜀
+        if (/^\s*\([A-Za-z][^)]*[a-z]{3}/.test(after) || (m[1] === '트리' && after[0] === '거')) continue;   // 이미 뒤에 괄호로 영어 단어가 붙었거나(약어 (PO) 등은 제외) '트리거'인 경우는 건너뜀
         if ((used[m[1]] = (used[m[1]] || 0) + 1) > 3) continue;   // 같은 용어는 한 페이지에서 앞의 3번까지만 표시(밑줄 과다 방지)
         frag.append(txt.slice(last, m.index));
         const sp = document.createElement('span'), en = window.TERMS[m[1]].replace(/ \((.+)\)$/, ' · $1'), sk = en + (n.parentElement.closest('td,th,h2,h3') ? '#' : '');   // 표·소제목의 용어는 본문과 따로 한 번씩 표시
