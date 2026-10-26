@@ -1,5 +1,5 @@
 /* 문제 은행 — q(주제id, 문제, [보기], 정답번호(1부터), 해설, 옵션)
-   ※ 교수님이 직접 언급한 2문항(src:'prof')을 제외하면 모두 '기출 유형 기반 예상문제'입니다. */
+   ※ 교수님이 직접 언급한 문항(src:'prof')을 제외하면 모두 '기출 유형 기반 예상문제'입니다. */
 window.QUIZ = [];
 (function () {
   const q = (t, text, opts, a, exp, o) => QUIZ.push(Object.assign({ id: QUIZ.length + 1, t, q: text, opts, a: a - 1, exp }, o || {}));
@@ -10,6 +10,12 @@ window.QUIZ = [];
     ['Cause-Effect Graphing testing (원인-결과 그래프 검사)', 'Equivalence Partitioning Testing (동치 분할 검사)', 'Boundary Value Testing (경계값 분석)', 'Comparison Testing (비교 검사)'], 2,
     '유효(valid)/무효(invalid) 값으로 입력을 클래스로 나누는 것은 동치 분할(Equivalence Partitioning)입니다. [2023.5·2024.5·2025.8 출제]', PROF);
   q('complexity', '정렬된 n개의 데이터를 처리하는데 O(N log₂N)의 시간이 소요되는 정렬 알고리즘은?', ['선택 정렬', '삽입 정렬', '버블 정렬', '합병 정렬'], 4, '선택·삽입·버블은 O(n²), 합병 정렬은 항상 O(n log n)입니다.', PROF);
+
+  q('gof-creational', "[2025.5·2023.7·2020.8] 다음 내용이 설명하는 디자인 패턴은?\n- 객체를 생성하기 위한 인터페이스를 정의하여 어떤 클래스가 인스턴스화 될 것인지는 서브클래스가 결정하도록 하는 것\n- Virtual-Constructor 패턴이라고도 함", ["Visitor 패턴", "Observer 패턴", "Factory Method 패턴", "Bridge 패턴"], 3, "Virtual Constructor = 팩토리 메서드 (생성 패턴).", PROF);
+  q('gof-intro', "[2022.3] GoF(Gang of Four) 디자인 패턴에서 생성 패턴에 해당하는 것은?", ["컴포지트 (Composite)", "어댑터 (Adapter)", "추상 팩토리 (Abstract Factory)", "옵서버 (Observer)"], 3, "컴포지트·어댑터=구조, 옵서버=행위, 추상 팩토리=생성.", PROF);
+  q('gof-behavioral', "[2020.8·2020.6] 디자인 패턴 중에서 행위적 패턴에 속하지 않는 것은?", ["커맨드 (Command) 패턴", "옵서버 (Observer) 패턴", "프로토타입 (Prototype) 패턴", "상태 (State) 패턴"], 3, "프로토타입은 생성 패턴.", PROF);
+  q('gof-intro', "[2025.2·2023.5·2020.9] GoF(Gang of Four) 디자인 패턴 분류에 해당하지 않은 것은?", ["생성 패턴", "객체 패턴", "행위 패턴", "구조 패턴"], 2, "분류는 생성·구조·행위뿐. \"객체\"는 적용 범위(클래스/객체).", PROF);
+  q('gof-behavioral', "[2023.5] 디자인 패턴 중 알고리즘은 상위 클래스에서 정의하고 나머지는 하위 클래스에서 구체화하는 패턴은?", ["옵서버", "템플릿 메서드", "상태", "컴포지트"], 2, "템플릿 메서드 = 골격은 상위, 세부는 하위 클래스.", PROF);
 
   /* ───── 1과목: 개발 모형 ───── */
   q('waterfall', '다음 중 폭포수 모형의 특징으로 옳은 것은?', ['위험 분석 단계가 포함된다', '순차적·선형적으로 진행되며 요구사항 변경이 어렵다', '시제품을 반복 개선한다', '짧은 스프린트로 반복한다'], 2, '폭포수는 순차 진행, 요구 변경이 어려운 것이 특징입니다.');

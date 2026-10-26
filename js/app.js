@@ -80,7 +80,7 @@
       <div class="stat"><div class="card"><div class="n">${pct}%</div><div class="l">학습 진도 (${done}/${tot})</div></div><div class="card"><div class="n">${QUIZ.length}</div><div class="l">문제 은행</div></div><div class="card"><div class="n">${state.answered ? rate + '%' : '–'}</div><div class="l">누적 정답률</div></div><div class="card"><div class="n">${state.wrong.length}</div><div class="l">오답 노트</div></div></div>
       <h2 class="plain">교수님 강조 항목</h2><ul class="quick">${hot.map(([id, l]) => `<li><a href="#/t/${id}">${l}</a></li>`).join('')}</ul>
       <div class="books">${book(1)}${book(2)}</div>
-      <div class="callout warn"><b>참고</b>문제 은행은 기출 유형을 바탕으로 만든 예상문제입니다. 교수님이 언급하신 2문항(영어 문제, 정렬 복잡도)만 실제 출제 문항이며, 용어는 수업 자료와 대조해 확인하세요.</div>`;
+      <div class="callout warn"><b>참고</b>문제 은행은 기출 유형을 바탕으로 만든 예상문제입니다. 교수님이 언급하신 문항(영어 문제, 정렬 복잡도, 디자인 패턴 5문항)만 실제 출제 문항이며, 용어는 수업 자료와 대조해 확인하세요.</div>`;
   }
 
   /* ───── 학습 페이지 ───── */
@@ -144,7 +144,7 @@
     const topicOpts = TOPICS.map(t => `<option value="${t.id}" ${t.id === topic ? 'selected' : ''}>${t.subj}과목 · ${esc(t.title)}</option>`).join('');
     return `<div class="qwrap"><h1>문제풀이</h1><p class="en">보기 순서는 매번 섞입니다. 틀린 문제는 오답 노트에 자동 저장됩니다.</p>
       <div class="card"><div style="display:grid;gap:10px">
-        <label>범위 <select id="qScope"><option value="all">전체</option><option value="1">1과목</option><option value="2">2과목</option><option value="topic" ${topic ? 'selected' : ''}>특정 주제</option><option value="prof">교수님 언급 문제(영어·복잡도)</option><option value="wrong">오답 노트 (${state.wrong.length})</option></select></label>
+        <label>범위 <select id="qScope"><option value="all">전체</option><option value="1">1과목</option><option value="2">2과목</option><option value="topic" ${topic ? 'selected' : ''}>특정 주제</option><option value="prof">교수님 언급 문제(영어·복잡도·패턴)</option><option value="wrong">오답 노트 (${state.wrong.length})</option></select></label>
         <label id="qTopicW" style="${topic ? '' : 'display:none'}">주제 <select id="qTopic">${topicOpts}</select></label>
         <label>문항 수 <select id="qN"><option>10</option><option>20</option><option>30</option><option value="999">전부</option></select></label>
         <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" id="qGo">시작</button><button class="btn" id="qMock">모의고사 (각 과목 10문항 · 총 20)</button></div></div></div>

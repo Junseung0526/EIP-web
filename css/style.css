@@ -605,3 +605,9 @@ html[data-gl="off"] .th .en{display:none}
 .gl-card>div:first-child{display:flex;flex-direction:column;gap:3px;max-width:34em}
 .gl-card span{color:var(--muted);font-size:13px}
 .seg button.on{background:var(--accent-bg);color:var(--accent)}
+
+/* 개념 페이지 인라인 기출 문제 */
+details.qd{border:1px solid var(--line,#ddd);border-radius:8px;padding:8px 12px;margin:8px 0}
+details.qd>summary,details.qa>summary{cursor:pointer}
+details.qd ol{margin:6px 0 6px 1.2em}
+details.qa{margin-top:6px}
