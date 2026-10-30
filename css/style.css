@@ -462,6 +462,7 @@ svg.dg tspan.d{fill:var(--d)}svg.dg tspan.e{fill:var(--e)}svg.dg tspan.f{fill:va
 .qwrap{max-width:760px}
 .q-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .q-text{font-size:18px;font-weight:700;margin:8px 0 16px;white-space:pre-wrap;line-height:1.65;letter-spacing:-.01em}
+.q-img{display:block;max-width:min(100%,320px);margin:0 0 14px;border:1px solid var(--line);border-radius:8px;background:#fff}
 .q-opt{display:block;width:100%;text-align:left;padding:12px 16px;margin:8px 0;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);cursor:pointer;font:inherit;font-size:15px}
 .q-opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-bg)}
 .q-opt.ok{border-color:var(--b);background:var(--b-bg)}
@@ -607,7 +608,7 @@ html[data-gl="off"] .th .en{display:none}
 .seg button.on{background:var(--accent-bg);color:var(--accent)}
 
 /* 개념 페이지 인라인 기출 문제 */
-details.qd{border:1px solid var(--line,#ddd);border-radius:8px;padding:8px 12px;margin:8px 0}
+details.qd{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
 details.qd>summary,details.qa>summary{cursor:pointer}
 details.qd ol{margin:6px 0 6px 1.2em}
 details.qa{margin-top:6px}

@@ -3,3 +3,5 @@ _site/
 .DS_Store
 *.log
 graphify-out/
+js/data/past.local.js
+past-img/

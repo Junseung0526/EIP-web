@@ -173,25 +173,47 @@
     const show = () => {
       if (i >= qs.length) {
         const pct = Math.round(ok / qs.length * 100);
-        area.innerHTML = `<div class="card"><h2 style="margin-top:0">결과: ${ok} / ${qs.length} (${pct}%)</h2><div class="bar b"><i style="width:${pct}%"></i></div>${wrongs.length ? `<h3>틀린 문제</h3><ul>${wrongs.map(q => `<li>${esc(q.q.split('\n')[0])} → <b>${esc(q.opts[q.a])}</b> · <a href="#/t/${q.t}">${esc(byId[q.t].title)}</a></li>`).join('')}</ul>` : '<p>전 문항 정답입니다.</p>'}<button class="btn pri" id="qAgain">다시 풀기</button></div>`;
-        $('#qAgain').onclick = () => run(qs.slice().sort(() => Math.random() - .5));
+        area.innerHTML = `<div class="card"><h2 style="margin-top:0">결과: ${ok} / ${qs.length} (${pct}%)</h2><div class="bar b"><i style="width:${pct}%"></i></div>${wrongs.length ? `<h3>틀린 문제</h3><ul>${wrongs.map(q => `<li>${esc(q.q.split('\n')[0])} → <b>${esc(q.opts[q.a])}</b> · ${q.src === 'past' ? esc(q.tag) : `<a href="#/t/${q.t}">${esc(byId[q.t].title)}</a>`}</li>`).join('')}</ul>` : '<p>전 문항 정답입니다.</p>'}<button class="btn pri" id="qAgain">다시 풀기</button></div>`;
+        $('#qAgain').onclick = () => run(qs[0].src === 'past' ? qs : qs.slice().sort(() => Math.random() - .5));
         return;
       }
-      const q = qs[i], order = q.opts.map((_, k) => k).sort(() => Math.random() - .5);
-      area.innerHTML = `<div class="card"><div class="q-head"><span class="chip">${i + 1} / ${qs.length}</span><span class="chip a">${esc(byId[q.t].title)}</span>${q.src === 'prof' ? '<span class="chip e">교수님 언급</span>' : ''}</div><div class="bar" style="margin-bottom:10px"><i style="width:${i / qs.length * 100}%"></i></div>
-        <div class="q-text">${esc(q.q)}</div>${order.map((k, n) => `<button class="q-opt" data-k="${k}">${n + 1}. ${esc(q.opts[k])}</button>`).join('')}<div class="q-exp" id="qExp"></div></div>`;
+      const q = qs[i], past = q.src === 'past', order = q.opts.map((_, k) => k);
+      if (!past) order.sort(() => Math.random() - .5);
+      area.innerHTML = `<div class="card"><div class="q-head"><span class="chip">${i + 1} / ${qs.length}</span><span class="chip a">${past ? esc(q.tag) : esc(byId[q.t].title)}</span>${q.src === 'prof' ? '<span class="chip e">교수님 언급</span>' : ''}</div><div class="bar" style="margin-bottom:10px"><i style="width:${i / qs.length * 100}%"></i></div>
+        <div class="q-text">${esc(q.q)}</div>${(q.img || []).map(src => `<img class="q-img" src="${src}" alt="문제 그림">`).join('')}${order.map((k, n) => `<button class="q-opt" data-k="${k}">${past ? '①②③④'[k] : n + 1 + '.'} ${esc(q.opts[k])}</button>`).join('')}<div class="q-exp" id="qExp"></div></div>`;
       $$('.q-opt', area).forEach(b => b.onclick = () => {
         const k = +b.dataset.k, right = k === q.a;
         $$('.q-opt', area).forEach(x => { x.disabled = true; if (+x.dataset.k === q.a) x.classList.add('ok'); });
         if (!right) b.classList.add('no');
-        state.answered++; if (right) { ok++; state.correct++; state.wrong = state.wrong.filter(w => w !== q.id); } else { wrongs.push(q); if (!state.wrong.includes(q.id)) state.wrong.push(q.id); }
+        if (right) ok++; else wrongs.push(q);
+        if (!past) { state.answered++; if (right) { state.correct++; state.wrong = state.wrong.filter(w => w !== q.id); } else if (!state.wrong.includes(q.id)) state.wrong.push(q.id); }
         save();
-        $('#qExp').innerHTML = `<div class="callout ${right ? 'tip' : 'exam'}"><b>${right ? '정답' : '오답'}</b>${esc(q.exp)} <a href="#/t/${q.t}">개념 보기 →</a></div><button class="btn pri" id="qNext">${i + 1 < qs.length ? '다음 문제' : '결과 보기'}</button>`;
+        $('#qExp').innerHTML = `<div class="callout ${right ? 'tip' : 'exam'}"><b>${right ? '정답' : '오답'}</b>${past ? `정답은 ${'①②③④'[q.a]} ${esc(q.opts[q.a])}` : `${esc(q.exp)} <a href="#/t/${q.t}">개념 보기 →</a>`}</div><button class="btn pri" id="qNext">${i + 1 < qs.length ? '다음 문제' : '결과 보기'}</button>`;
         $('#qNext').onclick = () => { i++; show(); };
       });
     };
     show();
     area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ───── 기출문제 (시나공 PDF에서 로컬 추출 · 배포 제외) ───── */
+  const PAST = (window.PAST || []).map(e => ({ ...e, qs: e.qs.map(q => ({ id: `p${e.id}-${q.n}`, src: 'past', tag: `${e.title} ${q.n}번`, subj: q.subj, q: q.q, opts: q.o, a: q.a - 1, img: q.img })) }));
+  function pagePast() {
+    const src = '<a href="https://www.sinagong.co.kr/pds/001001001/books" target="_blank" rel="noopener">시나공 자료실</a>';
+    return `<div class="qwrap"><h1>기출문제</h1><p class="en">2024~2025년 정보처리기사 필기 1·2과목 (회차당 40문항). 출처: ${src}</p>
+      <div class="callout warn"><b>출처 · 이용 범위</b>문제와 정답은 ${src}에서 내려받은 「정보처리기사 필기 기출문제」 PDF(길벗 시나공)에서 옮겼습니다. 시나공 자료는 개인 학습용으로만 쓸 수 있어 이 데이터는 저장소에 올리지 않고 내 컴퓨터에서만 보입니다.</div>
+      ${PAST.length ? `<div class="card"><div style="display:grid;gap:10px">
+        <label>회차 <select id="pRound">${PAST.map(e => `<option value="${e.id}">${e.title}</option>`).join('')}<option value="all">전체 회차</option></select></label>
+        <label>과목 <select id="pSubj"><option value="0">1·2과목 (40문항)</option><option value="1">1과목 · 소프트웨어 설계</option><option value="2">2과목 · 소프트웨어 개발</option></select></label>
+        <div><button class="btn pri" id="pGo">시작</button></div></div></div><div id="qArea"></div>`
+      : '<div class="callout exam"><b>데이터 없음</b><code>python3 scripts/extract-past.py &lt;PDF…&gt;</code>로 <code>js/data/past.local.js</code>를 만든 뒤 로컬에서 여세요.</div>'}</div>`;
+  }
+  function initPast() {
+    if (!PAST.length) return;
+    $('#pGo').onclick = () => {
+      const r = $('#pRound').value, sj = +$('#pSubj').value;
+      run(PAST.filter(e => r === 'all' || e.id === r).flatMap(e => e.qs).filter(q => !sj || q.subj === sj));
+    };
   }
 
   /* ───── 핵심 요약(암기 요령 모음) ───── */
@@ -356,6 +378,7 @@
     if (a === 't') { cur = b; html = pageTopic(b); after = () => { mountDiagrams(main); buildToc(); markGloss(b); $$('[data-done]', main).forEach(btn => btn.onclick = () => { state.done[b] ? delete state.done[b] : (state.done[b] = 1); save(); route(); }); }; }
     else if (a === 'scope') html = pageScope();
     else if (a === 'quiz') { html = pageQuiz(params); after = initQuiz; }
+    else if (a === 'past') { html = pagePast(); after = initPast; }
     else if (a === 'cards') { const r = pageCards(params); html = r.html; after = () => initCards(r.deck); }
     else if (a === 'cheat') html = pageCheat();
     else if (a === 'search') html = pageSearch(params.get('q') || '');
